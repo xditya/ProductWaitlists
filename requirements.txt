@@ -1,0 +1,4 @@
+python-decouple
+flask
+flask-cors
+redis[hiredis]
