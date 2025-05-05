@@ -195,7 +195,7 @@
 <body bgcolor="#f7f7f7" style="margin: 0; padding: 0">
   <!-- Preheader text (hidden) -->
   <div style="display: none; max-height: 0px; overflow: hidden">
-    Welcome to Arc Consoles - You're #80 on the waitlist!
+    Welcome to Arc Consoles - You're #{{waitlist_current_position}} on the waitlist!
   </div>
 
   <!-- Header -->
@@ -275,7 +275,7 @@
                       line-height: 1.5;
                       margin-top: 0;
                     ">
-                  <strong>You're currently #80 of 80 on the waitlist.</strong>
+                  <strong>You're currently #{{waitlist_current_position}} of {{waitlist_total_size}} on the waitlist.</strong>
                 </p>
                 <br />
 
@@ -289,12 +289,12 @@
                 </p>
 
                 <div class="copy-container" style="word-break: break-all; margin-bottom: 20px">
-                  <a href="https://getwaitlist.com/waitlist/25622?ref_id=RS7E4NG7C" class="copylink" style="
+                  <a href="https://getwaitlist.com/waitlist/25622?ref={{referral_code}}" class="copylink" style="
                         color: #4b56f4;
                         text-decoration: underline;
                         font-family: Arial, Helvetica, sans-serif;
                         font-size: 14px;
-                      ">https://getwaitlist.com/waitlist/25622?ref_id=RS7E4NG7C</a>
+                      ">https://getwaitlist.com/waitlist/25622?ref={{referral_code}}</a>
                 </div>
                 <br />
 
@@ -308,12 +308,12 @@
                 </p>
 
                 <div style="margin-bottom: 20px">
-                  <a href="https://getwaitlist.com/waitlist/25622" class="spotlink" style="
+                  <a href="https://getwaitlist.com/waitlist/{{email}}" class="spotlink" style="
                         color: #4b56f4;
                         text-decoration: underline;
                         font-family: Arial, Helvetica, sans-serif;
                         font-size: 14px;
-                      ">https://getwaitlist.com/waitlist/25622</a>
+                      ">https://getwaitlist.com/waitlist/{{email}}</a>
                 </div>
                 <br />
 
@@ -334,8 +334,8 @@
                       line-height: 1.5;
                       margin-top: 0;
                     ">
-                  <a href="https://getwaitlist.com/waitlist/25622?ref_id=RS7E4NG7C" class="discordlink"
-                    style="color: #4b56f4; text-decoration: underline">https://getwaitlist.com/waitlist/25622?ref_id=RS7E4NG7C</a>
+                  <a href="https://discord.arcconsoles.com" class="discordlink"
+                    style="color: #4b56f4; text-decoration: underline">https://discord.arcconsoles.com</a>
                 </p>
               </div>
             </td>
