@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f7f6; /* Light background */
+        color: #333; /* Dark text */
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
+
+      /* Header */
+      .header {
+        background-color: #2a6496; /* Primary blue */
+        color: #fff;
+        padding: 20px 0;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 2em;
+      }
+
+      /* Navigation Tabs (Future use) */
+      /*
+        .tabs {
+            margin-top: 15px;
+        }
+        
+        .tab {
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab.active {
+            border-bottom-color: #fff;
+            font-weight: bold;
+        }
+        */
+
+      /* Dashboard Sections */
+      .dashboard-section {
+        background-color: #fff;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+      }
+
+      .dashboard-section h2 {
+        margin-top: 0;
+        color: #2a6496; /* Primary blue */
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+      }
+
+      /* Overview Stats */
+      .overview-stats {
+        display: grid;
+        grid-template-columns: repeat(
+          auto-fit,
+          minmax(200px, 1fr)
+        ); /* Responsive grid */
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .stat-box {
+        background-color: #eef; /* Very light blue */
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+        border: 1px solid #dde;
+      }
+
+      .stat-box h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+        color: #555;
+      }
+
+      .stat-box p {
+        margin: 0;
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #2a6496; /* Primary blue */
+      }
+
+      .overview-note {
+        font-size: 0.9em;
+        color: #666;
+        text-align: center;
+        font-style: italic;
+      }
+
+      /* Table Styles */
+      .table-responsive {
+        overflow-x: auto; /* Make table scrollable horizontally on small screens */
+      }
+
+      .waitlist-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .waitlist-table th,
+      .waitlist-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+
+      .waitlist-table th {
+        background-color: #f8f8f8; /* Light grey header */
+        font-weight: bold;
+        color: #555;
+        text-transform: uppercase;
+        font-size: 0.9em;
+      }
+
+      .waitlist-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9; /* Subtle stripe effect */
+      }
+
+      .waitlist-table tbody tr:hover {
+        background-color: #f1f1f1; /* Hover effect */
+      }
+
+      /* Action Button */
+      .remove-btn {
+        background-color: #e74c3c; /* Red for danger */
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: background-color 0.3s ease;
+      }
+
+      .remove-btn:hover {
+        background-color: #c0392b; /* Darker red on hover */
+      }
+
+      /* Placeholder/Info/Error Messages within table body */
+      .loading-row td,
+      .info-message td,
+      .error-message td {
+        text-align: center;
+        font-style: italic;
+        color: #777;
+        padding: 20px;
+      }
+
+      .error-message td {
+        color: #e74c3c; /* Red for errors */
+        font-weight: bold;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 100; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        backdrop-filter: blur(5px); /* Optional: blur background */
+        -webkit-backdrop-filter: blur(5px); /* Safari support */
+
+        /* Use flexbox for centering when visible (controlled by JS adding a class) */
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Class to make modal visible using JS */
+      .modal.is-visible {
+        display: flex;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: auto; /* Auto margins for centering (works with flex) */
+        padding: 30px;
+        border-radius: 8px;
+        width: 90%; /* Could be 80% */
+        max-width: 500px; /* Max width */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        position: relative; /* Needed for close button positioning */
+      }
+
+      .modal-content h3 {
+        margin-top: 0;
+        color: #2a6496;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      .modal-content p {
+        margin-bottom: 20px;
+        font-size: 1.1em;
+      }
+
+      .modal-actions {
+        text-align: right;
+      }
+
+      .modal-actions button {
+        margin-left: 10px;
+      }
+
+      /* Close Button */
+      .close-button {
+        color: #aaa;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .close-button:hover,
+      .close-button:focus {
+        color: #777;
+        text-decoration: none;
+      }
+
+      /* Generic Button Styling */
+      .button {
+        background-color: #5cb85c; /* Success green */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+      }
+
+      .button:hover {
+        background-color: #4cae4c;
+      }
+
+      .button-danger {
+        background-color: #d9534f; /* Danger red */
+      }
+
+      .button-danger:hover {
+        background-color: #c9302c;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 20px 0;
+        margin-top: 30px;
+        color: #777;
+        font-size: 0.9em;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 15px;
+        }
+
+        .header h1 {
+          font-size: 1.6em;
+        }
+
+        .stat-box h3 {
+          font-size: 1em;
+        }
+
+        .stat-box p {
+          font-size: 1.5em;
+        }
+
+        .waitlist-table th,
+        .waitlist-table td {
+          padding: 10px;
+          font-size: 0.9em;
+        }
+
+        .modal-content {
+          padding: 20px;
+        }
+
+        .modal-actions button {
+          margin-left: 5px;
+          padding: 8px 15px;
+          font-size: 0.9em;
+        }
+
+        .close-button {
+          font-size: 24px;
+          top: 8px;
+          right: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <h1>Waitlist Admin Dashboard</h1>
+    </header>
+
+    <main class="container">
+      <section id="overview" class="dashboard-section">
+        <h2>Overview</h2>
+        <div class="overview-stats">
+          <div class="stat-box">
+            <h3>Total Users</h3>
+            <p id="total-users">-</p>
+          </div>
+          <div class="stat-box">
+            <h3>Users with Referrals</h3>
+            <p id="users-with-referrals">-</p>
+          </div>
+          <div class="stat-box">
+            <h3>Total Referrals Made</h3>
+            <p id="total-referrals-made">-</p>
+          </div>
+        </div>
+        <p class="overview-note">
+          This section provides key metrics at a glance for investors or
+          administrators.
+        </p>
+      </section>
+
+      <section id="waitlist-table-section" class="dashboard-section">
+        <h2>Waitlist</h2>
+        <div class="table-responsive">
+          <table class="waitlist-table">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Referral Code</th>
+                <th>Referrals</th>
+                <th>Referred By</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="waitlist-body">
+              <tr>
+                <td colspan="7" class="loading-row">
+                  Loading waitlist data...
+                </td>
+              </tr>
+              <tr
+                id="no-users-message"
+                class="info-message"
+                style="display: none"
+              >
+                <td colspan="7">No users currently in the waitlist.</td>
+              </tr>
+              <tr
+                id="error-message"
+                class="error-message"
+                style="display: none"
+              >
+                <td colspan="7">Failed to load waitlist data.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div id="confirm-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h3>Confirm Removal</h3>
+        <p>
+          Are you sure you want to remove
+          <strong id="user-to-remove-email"></strong> from the waitlist?
+        </p>
+        <div class="modal-actions">
+          <button id="cancel-remove-btn" class="button">Cancel</button>
+          <button id="confirm-remove-btn" class="button button-danger">
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 Arc Consoles. All rights reserved.</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get references to key DOM elements
+        const waitlistBody = document.getElementById("waitlist-body");
+        const totalUsersStat = document.getElementById("total-users");
+        const usersWithReferralsStat = document.getElementById(
+          "users-with-referrals"
+        );
+        const totalReferralsMadeStat = document.getElementById(
+          "total-referrals-made"
+        );
+        const noUsersMessage = document.getElementById("no-users-message");
+        const errorMessage = document.getElementById("error-message");
+
+        // Modal elements
+        const confirmModal = document.getElementById("confirm-modal");
+        const userToRemoveEmailSpan = document.getElementById(
+          "user-to-remove-email"
+        );
+        const cancelRemoveBtn = document.getElementById("cancel-remove-btn");
+        const confirmRemoveBtn = document.getElementById("confirm-remove-btn");
+        const closeButton = confirmModal.querySelector(".close-button");
+
+        // Variable to store the email of the user currently being considered for removal
+        let emailToRemove = null;
+
+        // --- Data Fetching and Table Population ---
+
+        /**
+         * Fetches waitlist data from the backend API.
+         * @returns {Promise<Array|null>} A promise that resolves with the waitlist data array or null on error.
+         */
+        async function fetchWaitlistData() {
+          // Show loading indicator
+          waitlistBody.innerHTML =
+            '<tr><td colspan="7" class="loading-row">Loading waitlist data...</td></tr>';
+          noUsersMessage.style.display = "none";
+          errorMessage.style.display = "none";
+
+          try {
+            // Fetch data from the API endpoint
+            const response = await fetch("/admin/waitlist");
+
+            // Check if the response is OK (status 200-299)
+            if (!response.ok) {
+              // If response is not OK, check if it's a 404 (No users)
+              if (response.status === 404) {
+                console.warn("API returned 404, likely no users in waitlist.");
+                return []; // Return empty array to indicate no users
+              }
+              // For other errors, throw an error
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Parse the JSON response
+            const data = await response.json();
+            return data;
+          } catch (error) {
+            console.error("Error fetching waitlist data:", error);
+            // Show error message
+            errorMessage.style.display = "table-row"; // Display the error row
+            waitlistBody.innerHTML = ""; // Clear loading message
+            return null; // Return null to indicate failure
+          }
+        }
+
+        /**
+         * Populates the waitlist table with the provided data.
+         * @param {Array} data - An array of user objects from the waitlist.
+         */
+        function populateTable(data) {
+          // Clear existing table rows (except the header)
+          waitlistBody.innerHTML = "";
+
+          if (!data || data.length === 0) {
+            // Show "No users" message if data is empty or null
+            noUsersMessage.style.display = "table-row";
+            return;
+          }
+
+          // Hide "No users" message if there is data
+          noUsersMessage.style.display = "none";
+
+          // Iterate over the data and create table rows
+          data.forEach((user) => {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${user.position !== undefined ? user.position : "-"}</td>
+                <td>${user.email || "-"}</td>
+                <td>${user.phone || "-"}</td>
+                <td>${user.referral_code || "-"}</td>
+                <td>${user.referrals !== undefined ? user.referrals : "-"}</td>
+                <td>${user.referred_by || "-"}</td>
+                <td>
+                    <button class="remove-btn" data-email="${
+                      user.email
+                    }">Remove</button>
+                </td>
+            `;
+
+            // Add event listener to the Remove button in this row
+            const removeButton = row.querySelector(".remove-btn");
+            removeButton.addEventListener("click", () => {
+              showConfirmModal(user.email);
+            });
+
+            waitlistBody.appendChild(row);
+          });
+        }
+
+        /**
+         * Updates the overview statistics based on the waitlist data.
+         * @param {Array} data - An array of user objects from the waitlist.
+         */
+        function updateOverviewStats(data) {
+          if (!data) {
+            totalUsersStat.textContent = "-";
+            usersWithReferralsStat.textContent = "-";
+            totalReferralsMadeStat.textContent = "-";
+            return;
+          }
+
+          const totalUsers = data.length;
+          const usersWithReferrals = data.filter(
+            (user) => user.referrals > 0
+          ).length;
+          const totalReferralsMade = data.reduce(
+            (sum, user) => sum + (user.referrals || 0),
+            0
+          );
+
+          totalUsersStat.textContent = totalUsers;
+          usersWithReferralsStat.textContent = usersWithReferrals;
+          totalReferralsMadeStat.textContent = totalReferralsMade;
+        }
+
+        // --- Modal Functionality ---
+
+        /**
+         * Shows the confirmation modal.
+         * @param {string} email - The email of the user to be removed.
+         */
+        function showConfirmModal(email) {
+          emailToRemove = email; // Store the email
+          userToRemoveEmailSpan.textContent = email; // Display email in the modal
+          confirmModal.classList.add("is-visible"); // Add class to make modal visible (CSS handles display: flex)
+        }
+
+        /**
+         * Hides the confirmation modal.
+         */
+        function hideConfirmModal() {
+          emailToRemove = null; // Clear the stored email
+          userToRemoveEmailSpan.textContent = ""; // Clear email display
+          confirmModal.classList.remove("is-visible"); // Remove class to hide modal
+        }
+
+        /**
+         * Handles the removal of a user.
+         * YOU NEED TO IMPLEMENT THE ACTUAL API CALL TO YOUR BACKEND HERE.
+         */
+        async function removeUser() {
+          if (!emailToRemove) {
+            console.error("No email specified for removal.");
+            hideConfirmModal();
+            return;
+          }
+
+          console.log(`Attempting to remove user with email: ${emailToRemove}`);
+
+          // --- IMPORTANT: IMPLEMENT YOUR BACKEND API CALL HERE ---
+
+          try {
+            const response = await fetch(`/admin/remove/${emailToRemove}`, {
+              method: "DELETE", // Assuming your backend uses DELETE for removal
+              //   // Add headers if needed (e.g., for authentication)
+              //   headers: {
+              //     Authorization: "Bearer your_auth_token",
+              //   },
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to remove user: ${response.status}`);
+            }
+
+            console.log(`User ${emailToRemove} removed successfully.`);
+
+            // After successful removal, hide the modal and refresh the waitlist data
+            hideConfirmModal();
+            loadWaitlistData(); // Reload data to update the table and stats
+          } catch (error) {
+            console.error("Error removing user:", error);
+            // Handle error display to the admin user (e.g., show a message on the page)
+            alert("Failed to remove user. Please try again."); // Simple alert for demonstration
+            hideConfirmModal(); // Hide modal even on error
+          }
+
+          console.log(`User ${emailToRemove} would be removed now.`);
+          hideConfirmModal();
+          // In a real app, you would call loadWaitlistData() here after successful removal.
+          loadWaitlistData();
+        }
+
+        // --- Event Listeners for Modal ---
+
+        // When the user clicks on <span> (x), close the modal
+        closeButton.addEventListener("click", hideConfirmModal);
+
+        // When the user clicks on the Cancel button, close the modal
+        cancelRemoveBtn.addEventListener("click", hideConfirmModal);
+
+        // When the user clicks on the Remove button in the modal, trigger removal
+        confirmRemoveBtn.addEventListener("click", removeUser);
+
+        // When the user clicks anywhere outside of the modal content, close it
+        // This uses event delegation on the modal overlay itself
+        confirmModal.addEventListener("click", (event) => {
+          // Check if the click target is the modal container itself, not its content
+          if (event.target === confirmModal) {
+            hideConfirmModal();
+          }
+        });
+
+        // --- Initial Data Load ---
+        /**
+         * Loads and displays waitlist data and updates stats.
+         */
+        async function loadWaitlistData() {
+          const waitlistData = await fetchWaitlistData();
+          populateTable(waitlistData);
+          updateOverviewStats(waitlistData);
+        }
+
+        // Load data when the page finishes loading
+        loadWaitlistData();
+      });
+    </script>
+  </body>
+</html>

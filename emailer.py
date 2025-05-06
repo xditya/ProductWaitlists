@@ -31,9 +31,11 @@ def send_html_email(
                 "{{waitlist_current_position}}", str(waitlist_current_position)
             )
             .replace("{{waitlist_total_size}}", str(waitlist_total_size))
-            .replace("{{referral_code}}", referral_code)
             .replace("{{email}}", receiver_email)
         )
+
+        if referral_code:
+            html_body = html_body.replace("{{referral_code}}", referral_code)
 
         # Attach the HTML content to the message
         message.attach(MIMEText(html_body, "html"))
